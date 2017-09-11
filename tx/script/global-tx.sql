@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS LocalTx DEFAULT CHARACTER SET = utf8mb4;
+CREATE DATABASE IF NOT EXISTS GlobalTxOrder DEFAULT CHARACTER SET = utf8mb4;
 
-Use LocalTx;
+Use GlobalTxOrder;
 
 CREATE TABLE `tb_order` (
 
@@ -8,6 +8,10 @@ CREATE TABLE `tb_order` (
   `ProductId` int(10) unsigned NOT NULL COMMENT '商品ID',
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单表';
+
+CREATE DATABASE IF NOT EXISTS GlobalTxProduct DEFAULT CHARACTER SET = utf8mb4;
+
+Use GlobalTxProduct;
 
 CREATE TABLE `tb_product` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',

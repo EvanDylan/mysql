@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.rhine.order.infrastructure.dao.ProductMapper">
+
+    <resultMap id="result" type="org.rhine.order.domain.entity.Product">
+        <id column="PRODUCT_ID" property="productId" jdbcType="INTEGER"/>
+        <result column="SHOP_ID" property="shopId" jdbcType="INTEGER"/>
+        <result column="PRODUCT_NAME" property="productName" jdbcType="VARCHAR"/>
+        <result column="PRICE" property="price" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="sql_select">
+        SELECT
+        PRODUCT_ID,
+        SHOP_ID,
+        PRODUCT_NAME,
+        PRICE
+        FROM
+        ORD_PRODUCT
+    </sql>
+
+    <select id="findById" resultMap="result">
+        <include refid="sql_select"/>
+        WHERE PRODUCT_ID = #{productId,javaType=java.lang.Long,jdbcType=BIGINT}
+    </select>
+
+    <select id="findByShopId" resultMap="result">
+        <include refid="sql_select"/>
+        WHERE SHOP_ID = #{shopId,javaType=java.lang.Long,jdbcType=BIGINT}
+    </select>
+
+</mapper>

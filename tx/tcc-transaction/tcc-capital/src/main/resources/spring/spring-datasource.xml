@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <!-- 业务数据源 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <!-- 数据库基本信息配置 -->
+        <property name="url" value="${jdbc.mysql.url}"/>
+        <property name="username" value="${jdbc.mysql.username}"/>
+        <property name="password" value="${jdbc.mysql.password}"/>
+        <property name="driverClassName" value="${jdbc.mysql.driverClassName}"/>
+        <property name="filters" value="${jdbc.mysql.filters}"/>
+        <!-- 最大并发连接数 -->
+        <property name="maxActive" value="${jdbc.mysql.maxActive}"/>
+        <!-- 初始化连接数量 -->
+        <property name="initialSize" value="${jdbc.mysql.initialSize}"/>
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="${jdbc.mysql.maxWait}"/>
+        <!-- 最小空闲连接数 -->
+        <property name="minIdle" value="${jdbc.mysql.minIdle}"/>
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="${jdbc.mysql.timeBetweenEvictionRunsMillis}"/>
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="${jdbc.mysql.minEvictableIdleTimeMillis}"/>
+        <property name="validationQuery" value="${jdbc.mysql.validationQuery}"/>
+        <property name="testWhileIdle" value="${jdbc.mysql.testWhileIdle}"/>
+        <property name="testOnBorrow" value="${jdbc.mysql.testOnBorrow}"/>
+        <property name="testOnReturn" value="${jdbc.mysql.testOnReturn}"/>
+        <property name="maxOpenPreparedStatements" value="${jdbc.mysql.maxOpenPreparedStatements}"/>
+        <!-- 打开 removeAbandoned 功能 -->
+        <property name="removeAbandoned" value="${jdbc.mysql.removeAbandoned}"/>
+        <!-- 1800 秒，也就是 30 分钟 -->
+        <property name="removeAbandonedTimeout" value="${jdbc.mysql.removeAbandonedTimeout}"/>
+        <!-- 关闭 abanded 连接时输出错误日志 -->
+        <property name="logAbandoned" value="${jdbc.mysql.logAbandoned}"/>
+    </bean>
+
+    <!-- tcc事务库 -->
+    <bean id="tccDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <!-- 数据库基本信息配置 -->
+        <property name="url" value="${tcc.jdbc.mysql.url}"/>
+        <property name="username" value="${jdbc.mysql.username}"/>
+        <property name="password" value="${jdbc.mysql.password}"/>
+        <property name="driverClassName" value="${jdbc.mysql.driverClassName}"/>
+        <property name="filters" value="${jdbc.mysql.filters}"/>
+        <!-- 最大并发连接数 -->
+        <property name="maxActive" value="${jdbc.mysql.maxActive}"/>
+        <!-- 初始化连接数量 -->
+        <property name="initialSize" value="${jdbc.mysql.initialSize}"/>
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="${jdbc.mysql.maxWait}"/>
+        <!-- 最小空闲连接数 -->
+        <property name="minIdle" value="${jdbc.mysql.minIdle}"/>
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="${jdbc.mysql.timeBetweenEvictionRunsMillis}"/>
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="${jdbc.mysql.minEvictableIdleTimeMillis}"/>
+        <property name="validationQuery" value="${jdbc.mysql.validationQuery}"/>
+        <property name="testWhileIdle" value="${jdbc.mysql.testWhileIdle}"/>
+        <property name="testOnBorrow" value="${jdbc.mysql.testOnBorrow}"/>
+        <property name="testOnReturn" value="${jdbc.mysql.testOnReturn}"/>
+        <property name="maxOpenPreparedStatements" value="${jdbc.mysql.maxOpenPreparedStatements}"/>
+        <!-- 打开 removeAbandoned 功能 -->
+        <property name="removeAbandoned" value="${jdbc.mysql.removeAbandoned}"/>
+        <!-- 1800 秒，也就是 30 分钟 -->
+        <property name="removeAbandonedTimeout" value="${jdbc.mysql.removeAbandonedTimeout}"/>
+        <!-- 关闭 abanded 连接时输出错误日志 -->
+        <property name="logAbandoned" value="${jdbc.mysql.logAbandoned}"/>
+    </bean>
+
+</beans>

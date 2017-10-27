@@ -1,0 +1,19 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:consumer check="false" />
+
+    <dubbo:reference id="capitalAccountService" interface="org.rhine.capital.api.CapitalAccountService"/>
+
+    <dubbo:reference id="capitalTradeOrderService" interface="org.rhine.capital.api.CapitalTradeOrderService"/>
+
+    <dubbo:reference id="redPacketAccountService" interface="org.rhine.redpacket.api.RedPacketAccountService"/>
+
+    <dubbo:reference id="redPacketTradeOrderService" interface="org.rhine.redpacket.api.RedPacketTradeOrderService"/>
+
+</beans>

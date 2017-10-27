@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.rhine.order.infrastructure.dao.OrderLineMapper" >
+
+  <resultMap id="result" type="org.rhine.order.domain.entity.OrderLine" >
+    <id column="ORDER_LINE_ID" property="id"/>
+    <result column="PRODUCT_ID" property="productId"/>
+    <result column="QUANTITY" property="quantity"/>
+    <result column="UNIT_PRICE" property="unitPrice"/>
+  </resultMap>
+
+  <sql id="sql_select" >
+    SELECT
+      ORDER_LINE_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE
+    FROM
+      ORD_ORDER_LINE
+  </sql>
+
+  <select id="findById" resultMap="result" parameterType="java.lang.Integer" >
+    <include refid="sql_select"/>
+    where ORDER_LINE_ID = #{orderLineId}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO ORD_ORDER_LINE
+      (PRODUCT_ID, QUANTITY, UNIT_PRICE)
+    VALUES
+      (#{productId}, #{quantity}, #{unitPrice})
+  </insert>
+
+</mapper>

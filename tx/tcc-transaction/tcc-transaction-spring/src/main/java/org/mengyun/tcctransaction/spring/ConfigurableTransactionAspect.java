@@ -13,10 +13,16 @@ import org.springframework.core.Ordered;
 @Aspect
 public class ConfigurableTransactionAspect extends CompensableTransactionAspect implements Ordered {
 
+    /**
+     * 通过tcc-transaction.xml配置文件,由Spring容器完成对{@code TransactionConfigurator.class}的注入.
+     */
     private TransactionConfigurator transactionConfigurator;
 
     public void init() {
 
+        /**
+         * 设定切面的执行拦截的拦截器,设定配置文件中指定的TransactionManager,设定哪些异常会被延迟执行cancel逻辑.
+         */
         TransactionManager transactionManager = transactionConfigurator.getTransactionManager();
 
         CompensableTransactionInterceptor compensableTransactionInterceptor = new CompensableTransactionInterceptor();
@@ -26,6 +32,10 @@ public class ConfigurableTransactionAspect extends CompensableTransactionAspect 
         this.setCompensableTransactionInterceptor(compensableTransactionInterceptor);
     }
 
+    /**
+     * 设定切面执行的优先级,优先级最高.
+     * @return
+     */
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;

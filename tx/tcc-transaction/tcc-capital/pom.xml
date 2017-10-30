@@ -20,6 +20,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.rhine</groupId>
+            <artifactId>tcc-capital-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dubbo</artifactId>
             <version>2.5.3</version>

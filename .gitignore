@@ -11,3 +11,6 @@ target/
 *.ipr
 *.iml
 *.iws
+
+# ignore log
+/logs

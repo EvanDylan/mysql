@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by changming.xie on 2/23/17.
+ * 构建指定类的实例,并提供缓存class和实例功能.
  */
 public final class FactoryBuilder {
 
@@ -24,17 +25,17 @@ public final class FactoryBuilder {
 
             for (BeanFactory beanFactory : beanFactories) {
                 if (beanFactory.isFactoryOf(clazz)) {
-                    classFactoryMap.putIfAbsent(clazz, new SingeltonFactory<T>(clazz, beanFactory.getBean(clazz)));
-                }
-            }
+            classFactoryMap.putIfAbsent(clazz, new SingeltonFactory<T>(clazz, beanFactory.getBean(clazz)));
+        }
+    }
 
             if (!classFactoryMap.containsKey(clazz)) {
-                classFactoryMap.putIfAbsent(clazz, new SingeltonFactory<T>(clazz));
-            }
-        }
+        classFactoryMap.putIfAbsent(clazz, new SingeltonFactory<T>(clazz));
+    }
+}
 
         return classFactoryMap.get(clazz);
-    }
+}
 
     public static void registerBeanFactory(BeanFactory beanFactory) {
         beanFactories.add(beanFactory);

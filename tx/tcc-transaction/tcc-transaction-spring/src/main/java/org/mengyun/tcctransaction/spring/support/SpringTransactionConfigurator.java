@@ -13,11 +13,15 @@ import java.util.concurrent.Executors;
 
 /**
  * Created by changmingxie on 11/11/15.
+ * 通过配置文件tcc-transaction.xml方式完成实例化工作
  */
 public class SpringTransactionConfigurator implements TransactionConfigurator {
 
     private static volatile ExecutorService executorService = null;
 
+    /**
+     * 依赖自己业务代码中实际配置使用的Transaction日志存储方案,有以下几种可选方案zk、db、redis等
+     */
     @Autowired
     private TransactionRepository transactionRepository;
 
@@ -27,6 +31,9 @@ public class SpringTransactionConfigurator implements TransactionConfigurator {
 
     private TransactionManager transactionManager;
 
+    /**
+     * 通过配置文件由Spring容器完成对象初始化工作,设定Transaction落地方式(详见{@code TransactionRepository}具体实现类)
+     */
     public void init() {
         transactionManager = new TransactionManager();
         transactionManager.setTransactionRepository(transactionRepository);

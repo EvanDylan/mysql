@@ -36,12 +36,6 @@
 
         <!-- spring -->
         <dependency>
-            <groupId>org.rhine</groupId>
-            <artifactId>tcc-capital-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>

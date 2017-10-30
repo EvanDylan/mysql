@@ -9,15 +9,25 @@ import java.io.Serializable;
 
 /**
  * Created by changmingxie on 10/27/15.
+ * 事务参与者.
  */
 public class Participant implements Serializable {
 
     private static final long serialVersionUID = 4127729421281425247L;
 
+    /**
+     * 全局事务id
+     */
     private TransactionXid xid;
 
+    /**
+     * 保持当前事务参与者被代理方法在confirm时的上下文信息
+     */
     private InvocationContext confirmInvocationContext;
 
+    /**
+     * 保持当前事务参与者被代理方法在cancel时的上下文信息
+     */
     private InvocationContext cancelInvocationContext;
 
     private Terminator terminator = new Terminator();

@@ -33,19 +33,41 @@ public class TransactionManager {
     public TransactionManager() {
     }
 
+    /**
+     * 开始根事务.
+     * @return
+     */
     public Transaction begin() {
-
+        /**
+         * 创建根事务.
+         */
         Transaction transaction = new Transaction(TransactionType.ROOT);
+        /**
+         * 持久化事务,落地事务日志
+         */
         transactionRepository.create(transaction);
+
+        /**
+         * 向事务管理器注册事务,使用ThreadLocal保存所有和当前线程相关的事务.
+         */
         registerTransaction(transaction);
         return transaction;
     }
 
     public Transaction propagationNewBegin(TransactionContext transactionContext) {
 
+        /**
+         * 创建子事务,讲道理这里new Transaction时偷偷设定当前的事务为子线程真的好么QAQ.
+         */
         Transaction transaction = new Transaction(transactionContext);
+        /**
+         * 持久化当前事务.
+         */
         transactionRepository.create(transaction);
 
+        /**
+         * 将事务注册到当前线程事务队列中
+         */
         registerTransaction(transaction);
         return transaction;
     }
@@ -66,10 +88,20 @@ public class TransactionManager {
 
         final Transaction transaction = getCurrentTransaction();
 
+        /**
+         * 更新当前事务状态
+         */
         transaction.changeStatus(TransactionStatus.CONFIRMING);
 
+        /**
+         * 持久化当前事务状态信息
+         */
         transactionRepository.update(transaction);
 
+        /**
+         * 异步执行提交事务的请求
+         * (固定线程池去执行)
+         */
         if (asyncCommit) {
             try {
                 Long statTime = System.currentTimeMillis();
@@ -86,6 +118,9 @@ public class TransactionManager {
                 throw new ConfirmingException(commitException);
             }
         } else {
+            /**
+             * 提交事务
+             */
             commitTransaction(transaction);
         }
     }
@@ -119,7 +154,13 @@ public class TransactionManager {
 
     private void commitTransaction(Transaction transaction) {
         try {
+            /**
+             * 获取当前事务所有的参与者,提交事务.
+             */
             transaction.commit();
+            /**
+             * 事务提交完毕,删除事务落地日志.
+             */
             transactionRepository.delete(transaction);
         } catch (Throwable commitException) {
             logger.warn("compensable transaction confirm failed, recovery job will try to confirm later.", commitException);
@@ -173,7 +214,13 @@ public class TransactionManager {
 
     public void enlistParticipant(Participant participant) {
         Transaction transaction = this.getCurrentTransaction();
+        /**
+         * 将事务参数者的相关事务信息加入到协调者大的事务队列中
+         */
         transaction.enlistParticipant(participant);
+        /**
+         * 事务信息落地
+         */
         transactionRepository.update(transaction);
     }
 }

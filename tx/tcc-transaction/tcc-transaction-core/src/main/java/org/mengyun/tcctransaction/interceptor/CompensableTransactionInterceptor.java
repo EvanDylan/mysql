@@ -43,27 +43,62 @@ public class CompensableTransactionInterceptor {
 
     public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
 
+        /**
+         * 获取被{@code Compensable.class}注解的方法.
+         */
         Method method = CompensableMethodUtils.getCompensableMethod(pjp);
 
+        /**
+         * 获取方法本身的注解信息.
+         */
         Compensable compensable = method.getAnnotation(Compensable.class);
+
+        /**
+         * 获取事务隔离级别,和Spring一样默认是REQUIRED(全部使用事务并且合并到一个事务中处理).
+         */
         Propagation propagation = compensable.propagation();
+        /**
+         * 初始化事务上下文信息(通过FactoryBuilder缓存{@code TransactionContextEditor.class}具体子类已经对象信息)
+         *
+         * 不同的TransactionContextEditor子类获取事务上下文信息的方式不一样,{@code DefaultTransactionContextEditor.class}通过隐藏参数方式传递context信息,
+         * dubbo则是利用的框架提供RpcContext来完成的参数传递.
+         */
         TransactionContext transactionContext = FactoryBuilder.factoryOf(compensable.transactionContextEditor()).getInstance().get(pjp.getTarget(), method, pjp.getArgs());
 
+        /**
+         * 是否异步
+         */
         boolean asyncConfirm = compensable.asyncConfirm();
 
         boolean asyncCancel = compensable.asyncCancel();
 
+        /**
+         * 是否已经有事务的参与者
+         */
         boolean isTransactionActive = transactionManager.isTransactionActive();
 
+        /**
+         * 检查事务的合法性
+         */
         if (!TransactionUtils.isLegalTransactionContext(isTransactionActive, propagation, transactionContext)) {
             throw new SystemException("no active compensable transaction while propagation is mandatory for method " + method.getName());
         }
 
+        /**
+         * 判断当前事务参与者是根事务、子事务、正常事务。
+         */
         MethodType methodType = CompensableMethodUtils.calculateMethodType(propagation, isTransactionActive, transactionContext);
 
         switch (methodType) {
+            /**
+             * 如果是根事务
+             */
             case ROOT:
                 return rootMethodProceed(pjp, asyncConfirm, asyncCancel);
+
+            /**
+             * 若果是子事务
+             */
             case PROVIDER:
                 return providerMethodProceed(pjp, transactionContext, asyncConfirm, asyncCancel);
             default:
@@ -80,15 +115,29 @@ public class CompensableTransactionInterceptor {
 
         try {
 
+            /**
+             * 创建事务
+             */
             transaction = transactionManager.begin();
 
             try {
+                /**
+                 * 执行被代理类方法
+                 */
                 returnValue = pjp.proceed();
             } catch (Throwable tryingException) {
 
+                /**
+                 * 如果是配置中的需要延迟执行cancel逻辑的异常(给confirm重试的机会.)
+                 */
                 if (isDelayCancelException(tryingException)) {
 
-                } else {
+                }
+
+                /**
+                 * 直接回滚
+                 */
+                else {
                     logger.warn(String.format("compensable transaction trying failed. transaction content:%s", JSON.toJSONString(transaction)), tryingException);
 
                     transactionManager.rollback(asyncCancel);
@@ -97,6 +146,9 @@ public class CompensableTransactionInterceptor {
                 throw tryingException;
             }
 
+            /**
+             * 没有异常提交事务.
+             */
             transactionManager.commit(asyncConfirm);
 
         } finally {
@@ -112,9 +164,17 @@ public class CompensableTransactionInterceptor {
         try {
 
             switch (TransactionStatus.valueOf(transactionContext.getStatus())) {
+
+                /**
+                 * 如果子事务还处于TRYING,则创建子事务,设定当前事务为子事务TransactionType.BRANCH;
+                 */
                 case TRYING:
                     transaction = transactionManager.propagationNewBegin(transactionContext);
                     return pjp.proceed();
+
+                /**
+                 * 更新事务状态,并且提交.
+                 */
                 case CONFIRMING:
                     try {
                         transaction = transactionManager.propagationExistBegin(transactionContext);
@@ -123,6 +183,10 @@ public class CompensableTransactionInterceptor {
                         //the transaction has been commit,ignore it.
                     }
                     break;
+
+                /**
+                 * 更新事务状态,然后回滚.
+                 */
                 case CANCELLING:
 
                     try {
@@ -132,9 +196,15 @@ public class CompensableTransactionInterceptor {
                         //the transaction has been rollback,ignore it.
                     }
                     break;
+                default:
+                    // never happened
+                    break;
             }
 
         } finally {
+            /**
+             * 清空当前线程相关的事务,擦屁股..
+             */
             transactionManager.cleanAfterCompletion(transaction);
         }
 

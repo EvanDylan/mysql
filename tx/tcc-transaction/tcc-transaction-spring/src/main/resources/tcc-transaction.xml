@@ -8,10 +8,11 @@
 
     <bean id="springBeanFactory" class="org.mengyun.tcctransaction.spring.support.SpringBeanFactory"/>
 
-
+    <!-- 事务配置 -->
     <bean id="transactionConfigurator" class="org.mengyun.tcctransaction.spring.support.SpringTransactionConfigurator"
           init-method="init"/>
 
+    <!-- 事务切面 -->
     <bean id="compensableTransactionAspect" class="org.mengyun.tcctransaction.spring.ConfigurableTransactionAspect"
           init-method="init">
         <property name="transactionConfigurator" ref="transactionConfigurator"/>
@@ -24,7 +25,7 @@
 
     <task:annotation-driven/>
 
-
+    <!-- 事务回滚 -->
     <bean id="transactionRecovery" class="org.mengyun.tcctransaction.recover.TransactionRecovery">
         <property name="transactionConfigurator" ref="transactionConfigurator"/>
     </bean>

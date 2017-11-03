@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by changmingxie on 11/10/15.
  */
-public class TransactionRecovery {
+public class  TransactionRecovery {
 
     static final Logger logger = Logger.getLogger(TransactionRecovery.class.getSimpleName());
 

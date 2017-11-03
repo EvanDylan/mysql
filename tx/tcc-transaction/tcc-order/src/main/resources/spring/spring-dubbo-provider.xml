@@ -17,6 +17,6 @@
     <dubbo:protocol name="dubbo" port="20881"/>
 
     <!-- 声明需要暴露的服务接口 -->
-    <dubbo:service interface="org.rhine.order.api.PlaceOrderService" ref="placeOrderService" retries="3"/>
+    <dubbo:service interface="org.rhine.order.api.PlaceOrderService" ref="placeOrderService" timeout="600000"/>
 
 </beans>

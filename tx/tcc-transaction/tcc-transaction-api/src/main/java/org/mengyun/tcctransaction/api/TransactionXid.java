@@ -20,7 +20,7 @@ public class TransactionXid implements Xid, Serializable {
 
     private byte[] branchQualifier;
 
-    public TransactionXid() {
+    public  TransactionXid() {
         globalTransactionId = uuidToByteArray(UUID.randomUUID());
         branchQualifier = uuidToByteArray(UUID.randomUUID());
     }
@@ -114,14 +114,14 @@ public class TransactionXid implements Xid, Serializable {
         return true;
     }
 
-    private static byte[] uuidToByteArray(UUID uuid) {
+    public static byte[] uuidToByteArray(UUID uuid) {
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
         bb.putLong(uuid.getMostSignificantBits());
         bb.putLong(uuid.getLeastSignificantBits());
         return bb.array();
     }
 
-    private static UUID byteArrayToUUID(byte[] bytes) {
+    public static UUID byteArrayToUUID(byte[] bytes) {
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         long firstLong = bb.getLong();
         long secondLong = bb.getLong();

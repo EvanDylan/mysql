@@ -6,14 +6,14 @@
        http://code.alibabatech.com/schema/dubbo
        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <dubbo:consumer check="false" />
+    <dubbo:consumer check="false"/>
 
-    <dubbo:reference id="capitalAccountService" interface="org.rhine.capital.api.CapitalAccountService"/>
+    <dubbo:reference id="capitalAccountService" interface="org.rhine.capital.api.CapitalAccountService" timeout="600000"/>
 
-    <dubbo:reference id="capitalTradeOrderService" interface="org.rhine.capital.api.CapitalTradeOrderService"/>
+    <dubbo:reference id="capitalTradeOrderService" interface="org.rhine.capital.api.CapitalTradeOrderService" timeout="600000"/>
 
-    <dubbo:reference id="redPacketAccountService" interface="org.rhine.redpacket.api.RedPacketAccountService"/>
+    <dubbo:reference id="redPacketAccountService" interface="org.rhine.redpacket.api.RedPacketAccountService" timeout="600000"/>
 
-    <dubbo:reference id="redPacketTradeOrderService" interface="org.rhine.redpacket.api.RedPacketTradeOrderService"/>
+    <dubbo:reference id="redPacketTradeOrderService" interface="org.rhine.redpacket.api.RedPacketTradeOrderService" timeout="600000"/>
 
 </beans>

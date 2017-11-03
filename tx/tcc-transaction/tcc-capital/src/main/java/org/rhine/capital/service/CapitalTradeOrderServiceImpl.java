@@ -10,6 +10,7 @@ package org.rhine.capital.service;
 
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
 import org.rhine.capital.api.CapitalTradeOrderService;
 import org.rhine.capital.api.dto.CapitalTradeOrderDto;
 import org.rhine.capital.domain.entity.CapitalAccount;
@@ -37,10 +38,10 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
     TradeOrderRepository tradeOrderRepository;
 
     @Override
-    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord")
+    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = DubboTransactionContextEditor.class)
     @Transactional(rollbackFor = Exception.class)
     public String record(CapitalTradeOrderDto tradeOrderDto) {
-        LOG.debug("==>capital try record called");
+        LOG.info("==>capital try record called");
 
         TradeOrder tradeOrder = new TradeOrder(
                 tradeOrderDto.getSelfUserId(),
@@ -62,7 +63,7 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
 
     @Transactional(rollbackFor = Exception.class)
     public void confirmRecord(CapitalTradeOrderDto tradeOrderDto) {
-    	LOG.debug("==>capital confirm record called");
+    	LOG.info("==>capital confirm record called");
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
@@ -79,7 +80,7 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
 
     @Transactional(rollbackFor = Exception.class)
     public void cancelRecord(CapitalTradeOrderDto tradeOrderDto) {
-    	LOG.debug("==>capital cancel record called");
+    	LOG.info("==>capital cancel record called");
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 

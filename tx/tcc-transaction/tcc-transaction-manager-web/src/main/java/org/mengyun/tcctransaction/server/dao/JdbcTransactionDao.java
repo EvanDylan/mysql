@@ -3,6 +3,7 @@ package org.mengyun.tcctransaction.server.dao;
 
 import org.mengyun.tcctransaction.server.vo.PageVo;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
 import javax.xml.bind.DatatypeConverter;
@@ -35,7 +36,7 @@ public class JdbcTransactionDao implements TransactionDao {
     }
 
     private String getTableName() {
-        return KEY_NAME_SPACE + "_" + tableSuffix;
+        return KEY_NAME_SPACE + tableSuffix;
     }
 
     @Override

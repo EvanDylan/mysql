@@ -13,6 +13,6 @@
     <dubbo:registry protocol="zookeeper" address="${zookeeper.cluster.ip}:${zookeeper.cluster.port}"
                     session="${zookeeper.session.timeout}" timeout="${zookeeper.connect.timeout}" register="false"/>
 
-    <dubbo:reference id="placeOrderService" interface="org.rhine.order.api.PlaceOrderService" check="false"/>
+    <dubbo:reference id="placeOrderService" interface="org.rhine.order.api.PlaceOrderService" check="false" timeout="600000"/>
 
 </beans>

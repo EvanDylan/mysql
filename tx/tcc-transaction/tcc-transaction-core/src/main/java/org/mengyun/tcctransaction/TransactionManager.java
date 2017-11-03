@@ -57,7 +57,7 @@ public class TransactionManager {
     public Transaction propagationNewBegin(TransactionContext transactionContext) {
 
         /**
-         * 创建子事务,讲道理这里new Transaction时偷偷设定当前的事务为子线程真的好么QAQ.
+         * 创建子事务,讲道理这里new Transaction时偷偷设定当前的事务为子事务真的好么QAQ.
          */
         Transaction transaction = new Transaction(transactionContext);
         /**

@@ -25,7 +25,7 @@ public abstract class ResourceCoordinatorAspect {
     }
 
     /**
-     * 环绕通知,方法执行前和执行后,都会执行一次,每次被注解的方法执行该段逻辑都会被执行两次.
+     * 环绕通知.
      * @param pjp
      * @return
      * @throws Throwable

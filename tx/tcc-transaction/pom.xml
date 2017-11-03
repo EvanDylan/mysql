@@ -19,7 +19,7 @@
         <module>tcc-redpacket-api</module>
         <module>tcc-capital</module>
         <module>tcc-capital-api</module>
-        <module>tcc-web</module>
+        <module>tcc-trade-web</module>
         <module>tcc-transaction-api</module>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-dubbo</module>

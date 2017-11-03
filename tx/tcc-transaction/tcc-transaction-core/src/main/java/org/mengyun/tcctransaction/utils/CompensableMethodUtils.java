@@ -39,9 +39,8 @@ public class CompensableMethodUtils {
             return MethodType.ROOT;
         }
         /**
-         * 满足: 当前没有事务参与者、事务上下文被创建并且满足事务传播机制为REQUIRED或者事务传播机制为MANDATORY
+         * 满足: 当前没有事务参与者、事务上下文没有被创建并且满足事务传播机制为REQUIRED或者事务传播机制为MANDATORY
          * 多讲一点：REQUIRED和MANDATORY的唯一区别是,REQUIRED碰到没有事务就新建一个事务,而MANDATORY则会抛出异常
-         * 则事务当前事务为子事务.
          */
         else if ((propagation.equals(Propagation.REQUIRED) || propagation.equals(Propagation.MANDATORY)) && !isTransactionActive && transactionContext != null) {
             return MethodType.PROVIDER;

@@ -1,13 +1,13 @@
 package org.rhine.order.domain.entity;
 
 import lombok.Data;
+import org.rhine.order.domain.factory.SnowflakeIdWorker;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 public class Order implements Serializable{
@@ -42,7 +42,7 @@ public class Order implements Serializable{
     public Order(long payerUserId, long payeeUserId) {
         this.payerUserId = payerUserId;
         this.payeeUserId = payeeUserId;
-        this.merchantOrderNo = UUID.randomUUID().toString();
+        this.merchantOrderNo = String.valueOf(SnowflakeIdWorker.getInstance().nextId());
     }
 
     public long getPayerUserId() {

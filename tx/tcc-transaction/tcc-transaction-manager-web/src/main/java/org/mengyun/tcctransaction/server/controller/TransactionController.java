@@ -27,7 +27,7 @@ public class TransactionController {
     public static final int DEFAULT_PAGE_SIZE = 10;
 
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = {"/domain/{domain}/pagenum/{pagenum}", ""}, method = RequestMethod.GET)
     public ModelAndView manager(@PathVariable(value = "domain", required = false) String domain, @PathVariable(value = "pagenum", required = false) Integer pageNum) {
 
         if (StringUtils.isEmpty(domain)) {

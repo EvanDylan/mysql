@@ -8,10 +8,8 @@
  */
 package org.rhine.redpacket.service;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.mengyun.tcctransaction.api.Compensable;
-import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
 import org.rhine.redpacket.api.RedPacketTradeOrderService;
 import org.rhine.redpacket.api.dto.RedPacketTradeOrderDto;
 import org.rhine.redpacket.domain.entity.RedPacketAccount;
@@ -39,10 +37,10 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
     TradeOrderRepository tradeOrderRepository;
 
     @Override
-    @Compensable(confirmMethod = "confirmRecord",cancelMethod = "cancelRecord")
-    @Transactional
+    @Compensable(confirmMethod = "confirmRecord",cancelMethod = "cancelRecord", transactionContextEditor = DubboTransactionContextEditor.class)
+    @Transactional(rollbackFor = Exception.class)
     public String record(RedPacketTradeOrderDto tradeOrderDto) {
-    	LOG.debug("==>red packet try record called");
+    	LOG.info("==>red packet try record called");
 
         TradeOrder tradeOrder = new TradeOrder(
                 tradeOrderDto.getSelfUserId(),
@@ -62,9 +60,9 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
         return "success";
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void confirmRecord(RedPacketTradeOrderDto tradeOrderDto) {
-    	LOG.debug("==>red packet confirm record called");
+    	LOG.info("==>red packet confirm record called");
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
@@ -78,9 +76,9 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
         redPacketAccountRepository.save(transferToAccount);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void cancelRecord(RedPacketTradeOrderDto tradeOrderDto) {
-    	LOG.debug("==>red packet cancel record called");
+    	LOG.info("==>red packet cancel record called");
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 

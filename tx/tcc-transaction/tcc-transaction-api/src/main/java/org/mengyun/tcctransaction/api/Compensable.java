@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface Compensable {
+public @interface  Compensable {
 
     public Propagation propagation() default Propagation.REQUIRED;
 

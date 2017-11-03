@@ -25,8 +25,8 @@
     <!-- tcc事务恢复策略 -->
     <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
         <property name="maxRetryCount" value="30"/>
-        <property name="recoverDuration" value="120"/>
-        <property name="cronExpression" value="0 */1 * * * ?"/>
+        <property name="recoverDuration" value="12000"/>
+        <property name="cronExpression" value="0 0 1 * * ?"/>
         <property name="delayCancelExceptions">
             <util:set>
                 <value>com.alibaba.dubbo.remoting.TimeoutException</value>

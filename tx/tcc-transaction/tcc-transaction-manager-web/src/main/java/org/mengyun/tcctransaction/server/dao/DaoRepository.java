@@ -13,7 +13,6 @@ import java.util.Map;
 /**
  * Created by changming.xie on 10/11/17.
  */
-@Repository
 public class DaoRepository implements ApplicationContextAware {
 
     Map<String, TransactionDao> domainDaoMap = new HashMap<String, TransactionDao>();

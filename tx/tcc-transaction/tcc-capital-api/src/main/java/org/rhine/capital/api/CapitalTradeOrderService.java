@@ -8,6 +8,7 @@
  */
 package org.rhine.capital.api;
 
+import org.mengyun.tcctransaction.api.Compensable;
 import org.rhine.capital.api.dto.CapitalTradeOrderDto;
 
 /**
@@ -20,6 +21,7 @@ public interface CapitalTradeOrderService {
 	 * 
 	 * @param tradeOrderDto
 	 */
+	@Compensable
     public String record(CapitalTradeOrderDto tradeOrderDto);
     
 }

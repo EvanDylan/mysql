@@ -8,6 +8,7 @@
  */
 package org.rhine.redpacket.api;
 
+import org.mengyun.tcctransaction.api.Compensable;
 import org.rhine.redpacket.api.dto.RedPacketTradeOrderDto;
 
 /**
@@ -15,5 +16,6 @@ import org.rhine.redpacket.api.dto.RedPacketTradeOrderDto;
  */
 public interface RedPacketTradeOrderService {
 
+    @Compensable
     public String record(RedPacketTradeOrderDto tradeOrderDto);
 }

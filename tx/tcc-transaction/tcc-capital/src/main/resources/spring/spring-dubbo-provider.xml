@@ -17,9 +17,8 @@
     <dubbo:protocol name="dubbo" port="20880"/>
 
     <!-- 声明需要暴露的服务接口 -->
+    <dubbo:service interface="org.rhine.capital.api.CapitalAccountService" ref="capitalAccountService" timeout="600000"/>
 
-    <dubbo:service interface="org.rhine.capital.api.CapitalAccountService" ref="capitalAccountService" retries="3"/>
-
-    <dubbo:service interface="org.rhine.capital.api.CapitalTradeOrderService" ref="capitalTradeOrderService" retries="3"/>
+    <dubbo:service interface="org.rhine.capital.api.CapitalTradeOrderService" ref="capitalTradeOrderService" timeout="600000" />
 
 </beans>

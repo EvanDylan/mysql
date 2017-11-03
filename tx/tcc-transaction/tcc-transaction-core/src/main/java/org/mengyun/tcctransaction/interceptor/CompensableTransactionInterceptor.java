@@ -9,10 +9,7 @@ import org.mengyun.tcctransaction.NoExistedTransactionException;
 import org.mengyun.tcctransaction.SystemException;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionManager;
-import org.mengyun.tcctransaction.api.Compensable;
-import org.mengyun.tcctransaction.api.Propagation;
-import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.api.TransactionStatus;
+import org.mengyun.tcctransaction.api.*;
 import org.mengyun.tcctransaction.common.MethodType;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.utils.CompensableMethodUtils;
@@ -47,6 +44,8 @@ public class CompensableTransactionInterceptor {
          * 获取被{@code Compensable.class}注解的方法.
          */
         Method method = CompensableMethodUtils.getCompensableMethod(pjp);
+
+        System.out.println("补偿拦截器-------------------" + method.getName() + "----------------------");
 
         /**
          * 获取方法本身的注解信息.
@@ -91,13 +90,13 @@ public class CompensableTransactionInterceptor {
 
         switch (methodType) {
             /**
-             * 如果是根事务
+             * 如果是主事务
              */
             case ROOT:
                 return rootMethodProceed(pjp, asyncConfirm, asyncCancel);
 
             /**
-             * 若果是子事务
+             * 如果是服务提供方事务
              */
             case PROVIDER:
                 return providerMethodProceed(pjp, transactionContext, asyncConfirm, asyncCancel);
@@ -119,6 +118,7 @@ public class CompensableTransactionInterceptor {
              * 创建事务
              */
             transaction = transactionManager.begin();
+            System.out.println("补偿拦截器start root transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + TransactionXid.byteArrayToUUID(transaction.getXid().getGlobalTransactionId()).toString() + "----------------------");
 
             try {
                 /**
@@ -149,6 +149,7 @@ public class CompensableTransactionInterceptor {
             /**
              * 没有异常提交事务.
              */
+            System.out.println("补偿拦截器commit root transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
             transactionManager.commit(asyncConfirm);
 
         } finally {
@@ -160,16 +161,19 @@ public class CompensableTransactionInterceptor {
 
     private Object providerMethodProceed(ProceedingJoinPoint pjp, TransactionContext transactionContext, boolean asyncConfirm, boolean asyncCancel) throws Throwable {
 
+        System.out.println("补偿拦截器start provider transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
+
         Transaction transaction = null;
         try {
 
             switch (TransactionStatus.valueOf(transactionContext.getStatus())) {
 
                 /**
-                 * 如果子事务还处于TRYING,则创建子事务,设定当前事务为子事务TransactionType.BRANCH;
+                 * 如果事务还处于TRYING,则创建事务,设定当前事务为事务TransactionType.BRANCH;
                  */
                 case TRYING:
                     transaction = transactionManager.propagationNewBegin(transactionContext);
+                    System.out.println("补偿拦截器创建 Branch transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
                     return pjp.proceed();
 
                 /**
@@ -178,6 +182,7 @@ public class CompensableTransactionInterceptor {
                 case CONFIRMING:
                     try {
                         transaction = transactionManager.propagationExistBegin(transactionContext);
+                        System.out.println("补偿拦截器commit Branch  transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
                         transactionManager.commit(asyncConfirm);
                     } catch (NoExistedTransactionException excepton) {
                         //the transaction has been commit,ignore it.

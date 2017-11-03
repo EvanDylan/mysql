@@ -28,7 +28,9 @@ public class ResourceCoordinatorInterceptor {
         this.transactionManager = transactionManager;
     }
 
-    public Object interceptTransactionContextMethod(ProceedingJoinPoint pjp) throws Throwable {
+    public Object  interceptTransactionContextMethod(ProceedingJoinPoint pjp) throws Throwable {
+
+        System.out.println("资源协调拦截器-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
 
         /**
          * 获取和当前线程绑定的Transaction(通过{@code ThreadLocal.class}实现)
@@ -48,7 +50,7 @@ public class ResourceCoordinatorInterceptor {
             }
         }
 
-        return pjp.proceed(pjp.getArgs());
+         return pjp.proceed(pjp.getArgs());
     }
 
     /**
@@ -63,6 +65,7 @@ public class ResourceCoordinatorInterceptor {
          * 获取注解方法.
          */
         Method method = CompensableMethodUtils.getCompensableMethod(pjp);
+        System.out.println("资源协调拦截器入队参与者-------------------" + method.getName() + "----------------------");
         if (method == null) {
             throw new RuntimeException(String.format("join point not found method, point is : %s", pjp.getSignature().getName()));
         }
@@ -79,9 +82,10 @@ public class ResourceCoordinatorInterceptor {
         String cancelMethodName = compensable.cancelMethod();
 
         /**
-         * 获取当前事务的id
+         * 获取当前事务的全局id,并设定新的分支id
          */
         Transaction transaction = transactionManager.getCurrentTransaction();
+        System.out.println("--------------------" + TransactionXid.byteArrayToUUID(transaction.getXid().getGlobalTransactionId()).toString());
         TransactionXid xid = new TransactionXid(transaction.getXid().getGlobalTransactionId());
 
         /**

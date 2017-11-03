@@ -1,5 +1,7 @@
 package org.rhine.capital.api;
 
+import org.mengyun.tcctransaction.api.Compensable;
+
 import java.math.BigDecimal;
 
 /**
@@ -7,5 +9,6 @@ import java.math.BigDecimal;
  */
 public interface CapitalAccountService {
 
+    @Compensable
     BigDecimal getCapitalAccountByUserId(long userId);
 }

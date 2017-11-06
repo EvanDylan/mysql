@@ -9,7 +9,7 @@
 package org.rhine.capital.service;
 
 import org.mengyun.tcctransaction.api.Compensable;
-import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.api.Propagation;
 import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
 import org.rhine.capital.api.CapitalTradeOrderService;
 import org.rhine.capital.api.dto.CapitalTradeOrderDto;

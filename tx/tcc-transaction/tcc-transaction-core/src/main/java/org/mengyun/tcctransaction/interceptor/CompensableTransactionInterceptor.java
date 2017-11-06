@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.NoExistedTransactionException;
@@ -15,6 +14,8 @@ import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.utils.CompensableMethodUtils;
 import org.mengyun.tcctransaction.utils.ReflectionUtils;
 import org.mengyun.tcctransaction.utils.TransactionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -24,7 +25,7 @@ import java.util.Set;
  */
 public class CompensableTransactionInterceptor {
 
-    static final Logger logger = Logger.getLogger(CompensableTransactionInterceptor.class.getSimpleName());
+    static final Logger logger = LoggerFactory.getLogger(CompensableTransactionInterceptor.class.getSimpleName());
 
     private TransactionManager transactionManager;
 
@@ -45,7 +46,7 @@ public class CompensableTransactionInterceptor {
          */
         Method method = CompensableMethodUtils.getCompensableMethod(pjp);
 
-        System.out.println("补偿拦截器-------------------" + method.getName() + "----------------------");
+        logger.info("补偿拦截器-------------------" + method.getName() + "----------------------");
 
         /**
          * 获取方法本身的注解信息.
@@ -118,7 +119,7 @@ public class CompensableTransactionInterceptor {
              * 创建事务
              */
             transaction = transactionManager.begin();
-            System.out.println("补偿拦截器start root transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + TransactionXid.byteArrayToUUID(transaction.getXid().getGlobalTransactionId()).toString() + "----------------------");
+            logger.info("补偿拦截器start root transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + TransactionXid.byteArrayToUUID(transaction.getXid().getGlobalTransactionId()).toString() + "----------------------");
 
             try {
                 /**
@@ -149,7 +150,7 @@ public class CompensableTransactionInterceptor {
             /**
              * 没有异常提交事务.
              */
-            System.out.println("补偿拦截器commit root transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
+            logger.info("补偿拦截器commit root transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
             transactionManager.commit(asyncConfirm);
 
         } finally {
@@ -161,7 +162,7 @@ public class CompensableTransactionInterceptor {
 
     private Object providerMethodProceed(ProceedingJoinPoint pjp, TransactionContext transactionContext, boolean asyncConfirm, boolean asyncCancel) throws Throwable {
 
-        System.out.println("补偿拦截器start provider transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
+        logger.info("补偿拦截器start provider transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
 
         Transaction transaction = null;
         try {
@@ -173,7 +174,7 @@ public class CompensableTransactionInterceptor {
                  */
                 case TRYING:
                     transaction = transactionManager.propagationNewBegin(transactionContext);
-                    System.out.println("补偿拦截器创建 Branch transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
+                    logger.info("补偿拦截器创建 Branch transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
                     return pjp.proceed();
 
                 /**
@@ -182,7 +183,7 @@ public class CompensableTransactionInterceptor {
                 case CONFIRMING:
                     try {
                         transaction = transactionManager.propagationExistBegin(transactionContext);
-                        System.out.println("补偿拦截器commit Branch  transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
+                        logger.info("补偿拦截器commit Branch  transaction-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
                         transactionManager.commit(asyncConfirm);
                     } catch (NoExistedTransactionException excepton) {
                         //the transaction has been commit,ignore it.

@@ -13,6 +13,8 @@ import org.mengyun.tcctransaction.api.TransactionXid;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.utils.CompensableMethodUtils;
 import org.mengyun.tcctransaction.utils.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
@@ -20,6 +22,8 @@ import java.lang.reflect.Method;
  * Created by changmingxie on 11/8/15.
  */
 public class ResourceCoordinatorInterceptor {
+
+    static final Logger logger = LoggerFactory.getLogger(ResourceCoordinatorInterceptor.class.getSimpleName());
 
     private TransactionManager transactionManager;
 
@@ -30,7 +34,7 @@ public class ResourceCoordinatorInterceptor {
 
     public Object  interceptTransactionContextMethod(ProceedingJoinPoint pjp) throws Throwable {
 
-        System.out.println("资源协调拦截器-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
+        logger.info("资源协调拦截器-------------------" + CompensableMethodUtils.getCompensableMethod(pjp).getName() + "----------------------");
 
         /**
          * 获取和当前线程绑定的Transaction(通过{@code ThreadLocal.class}实现)
@@ -65,7 +69,7 @@ public class ResourceCoordinatorInterceptor {
          * 获取注解方法.
          */
         Method method = CompensableMethodUtils.getCompensableMethod(pjp);
-        System.out.println("资源协调拦截器入队参与者-------------------" + method.getName() + "----------------------");
+        logger.info("资源协调拦截器入队参与者-------------------" + method.getName() + "----------------------");
         if (method == null) {
             throw new RuntimeException(String.format("join point not found method, point is : %s", pjp.getSignature().getName()));
         }
@@ -85,7 +89,7 @@ public class ResourceCoordinatorInterceptor {
          * 获取当前事务的全局id,并设定新的分支id
          */
         Transaction transaction = transactionManager.getCurrentTransaction();
-        System.out.println("--------------------" + TransactionXid.byteArrayToUUID(transaction.getXid().getGlobalTransactionId()).toString());
+        logger.info("--------------------" + TransactionXid.byteArrayToUUID(transaction.getXid().getGlobalTransactionId()).toString());
         TransactionXid xid = new TransactionXid(transaction.getXid().getGlobalTransactionId());
 
         /**

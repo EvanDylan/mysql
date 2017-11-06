@@ -57,8 +57,8 @@ public class PaymentServiceImpl {
 	 * @param capitalPayAmount
 	 *            资金帐户支付金额.
 	 */
-    @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment", transactionContextEditor = DubboTransactionContextEditor.class)
-    @Transactional
+    @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment")
+    @Transactional(rollbackFor = Exception.class)
     public void makePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
     	
     	LOG.info("==>order try make payment called");
@@ -69,15 +69,15 @@ public class PaymentServiceImpl {
         order.pay(redPacketPayAmount, capitalPayAmount);
         orderRepository.updateOrder(order);
         
-        LOG.debug("==try capitalTradeOrderService.record(null, buildCapitalTradeOrderDto(order) begin");
-        // 资金帐户交易订单记录（因为此方法中有TransactionContext参数，因此也会被TccTransactionContextAspect拦截处理）
+        LOG.debug("==try capitalTradeOrderService.record(buildCapitalTradeOrderDto(order) begin");
+        // 资金帐户交易订单记录
         String result = capitalTradeOrderService.record(buildCapitalTradeOrderDto(order));
-        LOG.info("==try capitalTradeOrderService.record(null, buildCapitalTradeOrderDto(order) end, result:" + result);
+        LOG.info("==try capitalTradeOrderService.record(buildCapitalTradeOrderDto(order) end, result:" + result);
         
-        LOG.info("==>try redPacketTradeOrderService.record(null, buildRedPacketTradeOrderDto(order)) begin");
+        LOG.info("==>try redPacketTradeOrderService.record(buildRedPacketTradeOrderDto(order)) begin");
 		// 红包帐户交易订单记录
         String result2 = redPacketTradeOrderService.record(buildRedPacketTradeOrderDto(order));
-        LOG.info("==>try redPacketTradeOrderService.record(null, buildRedPacketTradeOrderDto(order)) end, result:" + result2);
+        LOG.info("==>try redPacketTradeOrderService.record(buildRedPacketTradeOrderDto(order)) end, result:" + result2);
         
         LOG.info("==>order try end");
         
@@ -89,6 +89,7 @@ public class PaymentServiceImpl {
 	 * @param redPacketPayAmount
 	 * @param capitalPayAmount
 	 */
+    @Transactional(rollbackFor = Exception.class)
     public void confirmMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
     	LOG.info("==>order confirm make payment called, set status : CONFIRMED");
@@ -103,6 +104,7 @@ public class PaymentServiceImpl {
 	 * @param redPacketPayAmount
 	 * @param capitalPayAmount
 	 */
+    @Transactional(rollbackFor = Exception.class)
     public void cancelMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
     	LOG.info("==>order cancel make payment called, set status : PAY_FAILED");
